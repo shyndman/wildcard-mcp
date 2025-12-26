@@ -70,6 +70,17 @@ docker run -v $(pwd)/config.toml:/app/config.toml \
            ghcr.io/shyndman/wildcard-mcp:latest
 ```
 
+**Docker Compose:**
+
+```yaml
+services:
+  wildcard:
+    image: ghcr.io/shyndman/wildcard-mcp:latest
+    volumes:
+      - ./config.toml:/app/config.toml:ro
+      - ./data:/app/data:ro
+```
+
 ## Tool
 
 ### `randomize`
