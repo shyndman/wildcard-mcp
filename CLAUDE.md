@@ -9,7 +9,7 @@ uv sync --dev                                    # Install dependencies
 uv run pytest -v                                 # Run all tests
 uv run pytest tests/test_server.py::test_name   # Run single test
 ruff check --fix && ruff format                 # Lint and format
-uv run python -m wildcard_mcp.server            # Run server locally
+uv run python -m wildcard_mcp                   # Run server locally
 ```
 
 ## Architecture
@@ -22,8 +22,9 @@ uv run python -m wildcard_mcp.server            # Run server locally
 - Transport defaults to SSE; override with `WILDCARD_TRANSPORT` env var (e.g., `stdio`)
 
 **Config loading** (`src/wildcard_mcp/config.py`):
-- `load_config()` parses TOML, validates `[categories]` section
+- `load_config()` parses TOML into Pydantic models, validates `[[category]]` array
 - `load_category_data()` reads text files (one item per line), paths relative to config file
+- Unknown config keys cause validation errors (strict schema)
 
 ## Code Style
 

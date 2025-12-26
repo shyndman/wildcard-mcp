@@ -1694,6 +1694,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastmcp" },
+    { name = "pydantic" },
 ]
 
 [package.dev-dependencies]
@@ -1705,7 +1706,10 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "fastmcp", specifier = ">=2.0.0" }]
+requires-dist = [
+    { name = "fastmcp", specifier = ">=2.0.0" },
+    { name = "pydantic", specifier = ">=2.12.5" },
+]
 
 [package.metadata.requires-dev]
 dev = [

@@ -1,5 +1,6 @@
 """Wildcard MCP Server - Inject true randomness into LLM conversations."""
 
+import logging
 import os
 import random
 from pathlib import Path
@@ -9,6 +10,8 @@ from fastmcp import FastMCP
 from pydantic import Field
 
 from wildcard_mcp.config import load_category_data, load_config
+
+logger = logging.getLogger("wildcard_mcp")
 
 DEFAULT_CONFIG_PATH = "/config/config.toml"
 _LOCAL_DEV_PATH = Path(__file__).parent.parent.parent / "config.toml"
@@ -26,8 +29,7 @@ def find_config_path() -> Path:
     return _LOCAL_DEV_PATH
 
   raise FileNotFoundError(
-    f"Config file not found at {config_path}. "
-    "Set WILDCARD_CONFIG_PATH or mount to /config."
+    f"Config file not found at {config_path}. Set WILDCARD_CONFIG_PATH or mount to /config."
   )
 
 
@@ -40,12 +42,16 @@ def create_server(config_path: Path) -> FastMCP:
   Returns:
       Configured FastMCP server instance.
   """
+  logger.info("Creating Wildcard MCP server")
+
   config = load_config(config_path)
   category_data = load_category_data(config, config_path.parent)
   category_names = list(category_data.keys())
 
   if not category_names:
     raise ValueError("No categories defined in config")
+
+  logger.info("Server ready with %d categories", len(category_names))
 
   mcp = FastMCP("wildcard_mcp")
 
@@ -75,7 +81,7 @@ def create_server(config_path: Path) -> FastMCP:
     if category not in category_names:
       raise ValueError(f"Unknown category '{category}'. Available: {', '.join(category_names)}")
 
-    items = category_data[category]["items"]
+    items = category_data[category].items
 
     if count > len(items):
       return (

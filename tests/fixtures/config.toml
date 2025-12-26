@@ -1,3 +1,7 @@
-[categories]
-colors = "data/colors.txt"
-animals = "data/animals.txt"
+[[category]]
+name = "colors"
+path = "data/colors.txt"
+
+[[category]]
+name = "animals"
+path = "data/animals.txt"

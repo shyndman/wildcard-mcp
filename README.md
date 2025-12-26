@@ -17,11 +17,21 @@ cp config.sample.toml config.toml
 Edit `config.toml` to define your categories:
 
 ```toml
-[categories]
-male_names = "data/male_names.txt"
-female_names = "data/female_names.txt"
-colors = "data/colors.txt"
-adjectives = "data/adjectives.txt"
+[[category]]
+name = "male_names"
+path = "data/male_names.txt"
+
+[[category]]
+name = "female_names"
+path = "data/female_names.txt"
+
+[[category]]
+name = "colors"
+path = "data/colors.txt"
+
+[[category]]
+name = "adjectives"
+path = "data/adjectives.txt"
 ```
 
 ### 2. Create your data files
@@ -59,7 +69,7 @@ You can find comprehensive name lists at [ssa.gov/oact/babynames](https://www.ss
 **Local development:**
 
 ```bash
-uv run python -m wildcard_mcp.server
+uv run python -m wildcard_mcp
 ```
 
 **Docker:**
@@ -111,3 +121,4 @@ The server looks for config at `WILDCARD_CONFIG_PATH` (defaults to `/config/conf
 | `WILDCARD_CONFIG_PATH` | `/config/config.toml` | Config file location |
 | `WILDCARD_TRANSPORT` | `sse` | MCP transport: `sse` or `stdio` |
 | `WILDCARD_PORT` | `80` | Server port (SSE transport only) |
+| `WILDCARD_LOG_LEVEL` | `INFO` | Log level: `DEBUG`, `INFO`, `WARNING`, `ERROR` |

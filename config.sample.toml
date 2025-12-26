@@ -1,3 +1,7 @@
-[categories]
-male_names = "data/male_names.txt"
-female_names = "data/female_names.txt"
+[[category]]
+name = "male_names"
+path = "data/male_names.txt"
+
+[[category]]
+name = "female_names"
+path = "data/female_names.txt"

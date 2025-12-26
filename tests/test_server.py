@@ -16,7 +16,7 @@ async def test_list_tools(client: Client):
 async def test_randomize_single_item(client: Client, mcp):
   """Randomize with count=1 returns a single item from the category."""
   result = await client.call_tool("randomize", {"category": "colors"})
-  assert result.data in mcp._wildcard_category_data["colors"]["items"]
+  assert result.data in mcp._wildcard_category_data["colors"].items
 
 
 async def test_randomize_multiple_items(client: Client, mcp):
@@ -25,7 +25,7 @@ async def test_randomize_multiple_items(client: Client, mcp):
   items = result.data.split("\n")
   assert len(items) == 5
   for item in items:
-    assert item in mcp._wildcard_category_data["colors"]["items"]
+    assert item in mcp._wildcard_category_data["colors"].items
 
 
 async def test_randomize_no_duplicates(client: Client):
@@ -59,7 +59,7 @@ def test_categories_loaded(mcp):
 def test_category_data_not_empty(mcp):
   """Verify category data files have content."""
   for name in mcp._wildcard_category_names:
-    items = mcp._wildcard_category_data[name]["items"]
+    items = mcp._wildcard_category_data[name].items
     assert len(items) > 0, f"Category '{name}' has no items"
 
 

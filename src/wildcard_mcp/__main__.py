@@ -1,11 +1,28 @@
 """CLI entry point for Wildcard MCP server."""
 
+import logging
 import os
 
 from wildcard_mcp.server import create_server, find_config_path
 
 DEFAULT_TRANSPORT = "sse"
 DEFAULT_PORT = 80
+DEFAULT_LOG_LEVEL = "INFO"
+
+
+def configure_logging() -> None:
+  """Configure logging for wildcard_mcp."""
+  level_name = os.environ.get("WILDCARD_LOG_LEVEL", DEFAULT_LOG_LEVEL).upper()
+  level = getattr(logging, level_name, logging.INFO)
+
+  logging.basicConfig(
+    level=level,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+  )
+
+  logger = logging.getLogger("wildcard_mcp")
+  logger.setLevel(level)
 
 
 def get_transport() -> str:
@@ -19,5 +36,6 @@ def get_port() -> int:
 
 
 if __name__ == "__main__":
+  configure_logging()
   mcp = create_server(find_config_path())
   mcp.run(transport=get_transport(), port=get_port())
