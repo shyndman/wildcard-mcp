@@ -19,4 +19,4 @@ RUN mkdir /config
 #   -v /path/to/config:/config
 # The config.toml and data files should be in /config
 
-ENTRYPOINT ["python", "-m", "wildcard_mcp.server"]
+ENTRYPOINT ["python", "-m", "wildcard_mcp"]
