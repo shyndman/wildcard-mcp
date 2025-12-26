@@ -3,7 +3,7 @@
 import pytest
 from fastmcp import Client
 
-from wildcard_mcp.__main__ import DEFAULT_TRANSPORT, get_transport
+from wildcard_mcp.__main__ import DEFAULT_PORT, DEFAULT_TRANSPORT, get_port, get_transport
 
 
 async def test_list_tools(client: Client):
@@ -74,3 +74,16 @@ def test_transport_override_via_env(monkeypatch):
   """Transport can be overridden via WILDCARD_TRANSPORT environment variable."""
   monkeypatch.setenv("WILDCARD_TRANSPORT", "stdio")
   assert get_transport() == "stdio"
+
+
+def test_port_defaults_to_80(monkeypatch):
+  """Port defaults to 80 when WILDCARD_PORT is not set."""
+  monkeypatch.delenv("WILDCARD_PORT", raising=False)
+  assert get_port() == 80
+  assert DEFAULT_PORT == 80
+
+
+def test_port_override_via_env(monkeypatch):
+  """Port can be overridden via WILDCARD_PORT environment variable."""
+  monkeypatch.setenv("WILDCARD_PORT", "8080")
+  assert get_port() == 8080

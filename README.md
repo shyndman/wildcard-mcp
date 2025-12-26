@@ -65,12 +65,12 @@ uv run python -m wildcard_mcp.server
 **Docker:**
 
 ```bash
-docker run -p 8000:8000 \
+docker run -p 80:80 \
            -v $(pwd):/config \
            ghcr.io/shyndman/wildcard-mcp:latest
 ```
 
-The server listens on `http://localhost:8000/sse` for MCP clients. Mount a directory containing `config.toml` and your data files to `/config`.
+The server listens on `http://localhost/sse` for MCP clients. Mount a directory containing `config.toml` and your data files to `/config`.
 
 **Docker Compose:**
 
@@ -79,7 +79,7 @@ services:
   wildcard:
     image: ghcr.io/shyndman/wildcard-mcp:latest
     ports:
-      - "8000:8000"
+      - "80:80"
     volumes:
       - ./:/config:ro
 ```
@@ -110,3 +110,4 @@ The server looks for config at `WILDCARD_CONFIG_PATH` (defaults to `/config/conf
 |----------|---------|-------------|
 | `WILDCARD_CONFIG_PATH` | `/config/config.toml` | Config file location |
 | `WILDCARD_TRANSPORT` | `sse` | MCP transport: `sse` or `stdio` |
+| `WILDCARD_PORT` | `80` | Server port (SSE transport only) |
