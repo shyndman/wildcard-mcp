@@ -93,7 +93,7 @@ def load_category_data(config: WildcardConfig, base_path: Path) -> dict[str, Cat
     if not items:
       raise ValueError(f"Category file for '{category.name}' is empty: {file_path}")
 
-    logger.debug("Loaded category '%s': %d items from %s", category.name, len(items), file_path)
+    logger.info("Loaded category '%s': %d items from %s", category.name, len(items), file_path)
 
     data[category.name] = CategoryData(items=items, file_path=str(file_path))
 
