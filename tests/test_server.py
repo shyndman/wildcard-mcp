@@ -3,6 +3,8 @@
 import pytest
 from fastmcp import Client
 
+from wildcard_mcp.__main__ import DEFAULT_TRANSPORT, get_transport
+
 
 async def test_list_tools(client: Client):
   """Verify the randomize tool is registered."""
@@ -59,3 +61,16 @@ def test_category_data_not_empty(mcp):
   for name in mcp._wildcard_category_names:
     items = mcp._wildcard_category_data[name]["items"]
     assert len(items) > 0, f"Category '{name}' has no items"
+
+
+def test_transport_defaults_to_sse(monkeypatch):
+  """Transport defaults to SSE when WILDCARD_TRANSPORT is not set."""
+  monkeypatch.delenv("WILDCARD_TRANSPORT", raising=False)
+  assert get_transport() == "sse"
+  assert DEFAULT_TRANSPORT == "sse"
+
+
+def test_transport_override_via_env(monkeypatch):
+  """Transport can be overridden via WILDCARD_TRANSPORT environment variable."""
+  monkeypatch.setenv("WILDCARD_TRANSPORT", "stdio")
+  assert get_transport() == "stdio"
