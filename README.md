@@ -1,8 +1,8 @@
 # Wildcard MCP
 
-An MCP server that provides true randomness to break LLM output patterns.
+An MCP server that provides true randomness to expose new output pathways in LLM conversations.
 
-LLMs tend to gravitate toward common outputs — ask for a "random name" and you'll get one of the same 10 names every time. Wildcard injects actual randomness by selecting from user-provided lists.
+LLMs tend to gravitate toward common outputs — ask for a "random name" and you'll get one of the same 10 names every time, even with a random seed. Wildcard injects actual randomness by selecting from user-provided lists, opening up output pathways that would otherwise remain unexplored.
 
 ## Setup
 
