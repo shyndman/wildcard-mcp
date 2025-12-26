@@ -1,20 +1,24 @@
 """Pytest configuration and fixtures for wildcard-mcp tests."""
 
-import os
 from pathlib import Path
-
-# Set config path BEFORE importing the server module
-_FIXTURES_DIR = Path(__file__).parent / "fixtures"
-os.environ["WILDCARD_CONFIG_PATH"] = str(_FIXTURES_DIR / "config.toml")
 
 import pytest
 from fastmcp import Client
 
-from wildcard_mcp.server import mcp
+from wildcard_mcp.server import create_server
+
+FIXTURES_DIR = Path(__file__).parent / "fixtures"
+TEST_CONFIG_PATH = FIXTURES_DIR / "config.toml"
 
 
 @pytest.fixture
-async def client():
-    """Create a FastMCP client connected to the server."""
-    async with Client(transport=mcp) as mcp_client:
-        yield mcp_client
+def mcp():
+  """Create a test server with test fixtures config."""
+  return create_server(TEST_CONFIG_PATH)
+
+
+@pytest.fixture
+async def client(mcp):
+  """Create a FastMCP client connected to the test server."""
+  async with Client(transport=mcp) as mcp_client:
+    yield mcp_client

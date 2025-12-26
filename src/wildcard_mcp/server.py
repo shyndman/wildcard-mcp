@@ -2,103 +2,94 @@
 
 import os
 import random
-from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated
 
 from fastmcp import FastMCP
 from pydantic import Field
 
-from wildcard_mcp.config import CategoryData, load_category_data, load_config
+from wildcard_mcp.config import load_category_data, load_config
 
-# Config path: env var > /app/config.toml (Docker) > local config.toml
+# Default config search paths
 _DEFAULT_PATHS = [
-    Path("/app/config.toml"),  # Docker mount point
-    Path(__file__).parent.parent.parent / "config.toml",  # Local dev
+  Path("/app/config.toml"),  # Docker mount point
+  Path(__file__).parent.parent.parent / "config.toml",  # Local dev
 ]
 
 
-def _find_config_path() -> Path:
-    """Find the config file path."""
-    if env_path := os.environ.get("WILDCARD_CONFIG_PATH"):
-        return Path(env_path)
+def find_config_path() -> Path:
+  """Find the config file path using default discovery."""
+  if env_path := os.environ.get("WILDCARD_CONFIG_PATH"):
+    return Path(env_path)
 
-    for path in _DEFAULT_PATHS:
-        if path.exists():
-            return path
+  for path in _DEFAULT_PATHS:
+    if path.exists():
+      return path
 
-    raise FileNotFoundError(
-        "Config file not found. Set WILDCARD_CONFIG_PATH or mount config.toml"
-    )
+  raise FileNotFoundError("Config file not found. Set WILDCARD_CONFIG_PATH or mount config.toml")
 
 
-CONFIG_PATH = _find_config_path()
+def create_server(config_path: Path) -> FastMCP:
+  """Create a configured Wildcard MCP server.
 
+  Args:
+      config_path: Path to the TOML config file.
 
-def _load_data() -> tuple[list[str], dict[str, CategoryData]]:
-    """Load configuration and category data.
+  Returns:
+      Configured FastMCP server instance.
+  """
+  config = load_config(config_path)
+  category_data = load_category_data(config, config_path.parent)
+  category_names = list(category_data.keys())
 
-    Returns:
-        Tuple of (category_names, category_data).
-    """
-    config = load_config(CONFIG_PATH)
-    base_path = CONFIG_PATH.parent
-    data = load_category_data(config, base_path)
-    category_names = list(data.keys())
-    return category_names, data
-
-
-# Load at module level to build the schema
-_CATEGORY_NAMES, _CATEGORY_DATA = _load_data()
-
-if not _CATEGORY_NAMES:
+  if not category_names:
     raise ValueError("No categories defined in config")
 
-mcp = FastMCP("wildcard_mcp")
+  mcp = FastMCP("wildcard_mcp")
 
-
-@mcp.tool(
+  @mcp.tool(
     name="randomize",
     annotations={
-        "title": "Random Selection",
-        "readOnlyHint": True,
-        "destructiveHint": False,
-        "idempotentHint": False,  # Different result each call
-        "openWorldHint": False,
+      "title": "Random Selection",
+      "readOnlyHint": True,
+      "destructiveHint": False,
+      "idempotentHint": False,
+      "openWorldHint": False,
     },
-)
-async def randomize(
+  )
+  async def randomize(
     category: Annotated[
-        str, Field(description=f"Category to select from. Available: {', '.join(_CATEGORY_NAMES)}")
+      str, Field(description=f"Category to select from. Available: {', '.join(category_names)}")
     ],
     count: Annotated[
-        int, Field(default=1, description="Number of items to select (no duplicates)", ge=1)
+      int, Field(default=1, description="Number of items to select (no duplicates)", ge=1)
     ] = 1,
-) -> str:
+  ) -> str:
     """Select random items from a category.
 
     Use this tool to get truly random selections that break typical LLM output
     patterns. Each call returns different results.
     """
-    if category not in _CATEGORY_NAMES:
-        raise ValueError(f"Unknown category '{category}'. Available: {', '.join(_CATEGORY_NAMES)}")
+    if category not in category_names:
+      raise ValueError(f"Unknown category '{category}'. Available: {', '.join(category_names)}")
 
-    category_data = _CATEGORY_DATA[category]
-    items = category_data["items"]
+    items = category_data[category]["items"]
 
     if count > len(items):
-        return (
-            f"Error: Requested {count} items but category '{category}' "
-            f"only has {len(items)} items available."
-        )
+      return (
+        f"Error: Requested {count} items but category '{category}' "
+        f"only has {len(items)} items available."
+      )
 
     selected = random.sample(items, count)
 
     if count == 1:
-        return selected[0]
+      return selected[0]
 
     return "\n".join(selected)
 
+  # Attach metadata for testing
+  mcp._wildcard_category_names = category_names
+  mcp._wildcard_category_data = category_data
 
-if __name__ == "__main__":
-    mcp.run()
+  return mcp
