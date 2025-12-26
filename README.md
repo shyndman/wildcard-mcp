@@ -102,14 +102,11 @@ randomize(category="male_names", count=3)
 
 ## Configuration
 
-The server looks for config in this order:
-1. `WILDCARD_CONFIG_PATH` environment variable
-2. `/config/config.toml` (Docker mount point)
-3. `config.toml` in the project root (local dev)
+The server looks for config at `WILDCARD_CONFIG_PATH` (defaults to `/config/config.toml`), with a fallback to `config.toml` in the project root for local development.
 
 ## Environment Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `WILDCARD_CONFIG_PATH` | — | Override config file location |
+| `WILDCARD_CONFIG_PATH` | `/config/config.toml` | Config file location |
 | `WILDCARD_TRANSPORT` | `sse` | MCP transport: `sse` or `stdio` |

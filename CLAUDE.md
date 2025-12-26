@@ -17,7 +17,7 @@ uv run python -m wildcard_mcp.server            # Run server locally
 **Entry point:** `src/wildcard_mcp/__main__.py` calls `create_server()` and runs it.
 
 **Server creation** (`src/wildcard_mcp/server.py`):
-- `find_config_path()` discovers config via: `WILDCARD_CONFIG_PATH` env → `/config/config.toml` (Docker) → local `config.toml`
+- `find_config_path()` uses `WILDCARD_CONFIG_PATH` (defaults to `/config/config.toml`), falls back to local `config.toml`
 - `create_server(config_path)` is a factory that loads config, registers the `randomize` tool, and returns a FastMCP instance
 - Transport defaults to SSE; override with `WILDCARD_TRANSPORT` env var (e.g., `stdio`)
 

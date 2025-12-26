@@ -10,23 +10,25 @@ from pydantic import Field
 
 from wildcard_mcp.config import load_category_data, load_config
 
-# Default config search paths
-_DEFAULT_PATHS = [
-  Path("/config/config.toml"),  # Docker mount point
-  Path(__file__).parent.parent.parent / "config.toml",  # Local dev
-]
+DEFAULT_CONFIG_PATH = "/config/config.toml"
+_LOCAL_DEV_PATH = Path(__file__).parent.parent.parent / "config.toml"
 
 
 def find_config_path() -> Path:
   """Find the config file path using default discovery."""
-  if env_path := os.environ.get("WILDCARD_CONFIG_PATH"):
-    return Path(env_path)
+  config_path = Path(os.environ.get("WILDCARD_CONFIG_PATH", DEFAULT_CONFIG_PATH))
 
-  for path in _DEFAULT_PATHS:
-    if path.exists():
-      return path
+  if config_path.exists():
+    return config_path
 
-  raise FileNotFoundError("Config file not found. Set WILDCARD_CONFIG_PATH or mount config.toml")
+  # Fallback for local development
+  if _LOCAL_DEV_PATH.exists():
+    return _LOCAL_DEV_PATH
+
+  raise FileNotFoundError(
+    f"Config file not found at {config_path}. "
+    "Set WILDCARD_CONFIG_PATH or mount to /config."
+  )
 
 
 def create_server(config_path: Path) -> FastMCP:
