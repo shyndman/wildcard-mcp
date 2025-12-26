@@ -12,9 +12,11 @@ COPY src/ src/
 # Install dependencies
 RUN uv pip install --system .
 
-# Config and data are mounted at runtime:
-#   -v /path/to/config.toml:/app/config.toml
-#   -v /path/to/data:/app/data
-# Or set WILDCARD_CONFIG_PATH to a custom location
+# Create config directory for volume mounts
+RUN mkdir /config
+
+# Mount your config and data at runtime:
+#   -v /path/to/config:/config
+# The config.toml and data files should be in /config
 
 ENTRYPOINT ["python", "-m", "wildcard_mcp.server"]

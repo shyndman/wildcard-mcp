@@ -12,7 +12,7 @@ from wildcard_mcp.config import load_category_data, load_config
 
 # Default config search paths
 _DEFAULT_PATHS = [
-  Path("/app/config.toml"),  # Docker mount point
+  Path("/config/config.toml"),  # Docker mount point
   Path(__file__).parent.parent.parent / "config.toml",  # Local dev
 ]
 

@@ -66,12 +66,11 @@ uv run python -m wildcard_mcp.server
 
 ```bash
 docker run -p 8000:8000 \
-           -v $(pwd)/config.toml:/app/config.toml \
-           -v $(pwd)/data:/app/data \
+           -v $(pwd):/config \
            ghcr.io/shyndman/wildcard-mcp:latest
 ```
 
-The server listens on `http://localhost:8000/sse` for MCP clients.
+The server listens on `http://localhost:8000/sse` for MCP clients. Mount a directory containing `config.toml` and your data files to `/config`.
 
 **Docker Compose:**
 
@@ -82,8 +81,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./config.toml:/app/config.toml:ro
-      - ./data:/app/data:ro
+      - ./:/config:ro
 ```
 
 ## Tool
@@ -106,7 +104,7 @@ randomize(category="male_names", count=3)
 
 The server looks for config in this order:
 1. `WILDCARD_CONFIG_PATH` environment variable
-2. `/app/config.toml` (Docker mount point)
+2. `/config/config.toml` (Docker mount point)
 3. `config.toml` in the project root (local dev)
 
 ## Environment Variables
