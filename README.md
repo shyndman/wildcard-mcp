@@ -120,5 +120,6 @@ The server looks for config at `WILDCARD_CONFIG_PATH` (defaults to `/config/conf
 |----------|---------|-------------|
 | `WILDCARD_CONFIG_PATH` | `/config/config.toml` | Config file location |
 | `WILDCARD_TRANSPORT` | `sse` | MCP transport: `sse` or `stdio` |
+| `WILDCARD_HOST` | `0.0.0.0` | Server host (SSE transport only) |
 | `WILDCARD_PORT` | `80` | Server port (SSE transport only) |
 | `WILDCARD_LOG_LEVEL` | `INFO` | Log level: `DEBUG`, `INFO`, `WARNING`, `ERROR` |

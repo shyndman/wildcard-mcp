@@ -3,7 +3,14 @@
 import pytest
 from fastmcp import Client
 
-from wildcard_mcp.__main__ import DEFAULT_PORT, DEFAULT_TRANSPORT, get_port, get_transport
+from wildcard_mcp.__main__ import (
+  DEFAULT_HOST,
+  DEFAULT_PORT,
+  DEFAULT_TRANSPORT,
+  get_host,
+  get_port,
+  get_transport,
+)
 
 
 async def test_list_tools(client: Client):
@@ -87,3 +94,16 @@ def test_port_override_via_env(monkeypatch):
   """Port can be overridden via WILDCARD_PORT environment variable."""
   monkeypatch.setenv("WILDCARD_PORT", "8080")
   assert get_port() == 8080
+
+
+def test_host_defaults_to_all_interfaces(monkeypatch):
+  """Host defaults to 0.0.0.0 when WILDCARD_HOST is not set."""
+  monkeypatch.delenv("WILDCARD_HOST", raising=False)
+  assert get_host() == "0.0.0.0"
+  assert DEFAULT_HOST == "0.0.0.0"
+
+
+def test_host_override_via_env(monkeypatch):
+  """Host can be overridden via WILDCARD_HOST environment variable."""
+  monkeypatch.setenv("WILDCARD_HOST", "127.0.0.1")
+  assert get_host() == "127.0.0.1"
