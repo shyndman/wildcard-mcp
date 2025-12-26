@@ -1,0 +1,3 @@
+[categories]
+colors = "data/colors.txt"
+animals = "data/animals.txt"

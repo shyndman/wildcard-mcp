@@ -1,0 +1,3 @@
+[categories]
+male_names = "data/male_names.txt"
+female_names = "data/female_names.txt"
